@@ -1,0 +1,70 @@
+namespace: apps
+
+replicaCount: 2
+
+app:
+  name: testapp
+
+container:
+  name: app
+  port: 3000
+
+image:
+  repository: ghcr.io/observixprd/observix-test-app
+  tag: latest
+  pullPolicy: Always
+
+# Required helm defaults
+
+serviceAccount:
+  create: false
+  name: ""
+
+autoscaling:
+  enabled: false
+
+httpRoute:
+  enabled: false
+
+podAnnotations: {}
+
+podLabels: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Probes
+
+probes:
+  readiness:
+    path: /
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+  liveness:
+    path: /
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+# Service
+
+service:
+  port: 80
+  type: ClusterIP
+  targetPort: 3000
+
+# Ingress
+
+ingress:
+  enabled: true
+  className: traefik
+  clusterIssuer: letsencrypt-prod
+  entrypoints: websecure
+  host: testapp.observix.top
+  tlsSecret: testapp-tls
+  path: /
